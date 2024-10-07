@@ -1,6 +1,12 @@
+import { FC } from "react";
 import ImageCard from "../ImageCard/ImageCard";
 import css from "./ImageGallery.module.css";
-const ImageGallery = ({ pictures, onPictureClick }) => {
+import { ImageData } from "../../App.types";
+interface ImageGalleryProps {
+  pictures: ImageData[];
+  onPictureClick: (modalPictureSrc: string, modalPictureDesc: string) => void;
+}
+const ImageGallery: FC<ImageGalleryProps> = ({ pictures, onPictureClick }) => {
   return (
     <ul className={css.list}>
       {Array.isArray(pictures) &&

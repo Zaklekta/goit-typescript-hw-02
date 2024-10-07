@@ -1,8 +1,25 @@
+import React, { FC } from "react";
+import ReactDOM from "react-dom";
 import Modal from "react-modal";
-import css from "./ImageModal.module.css";
-Modal.setAppElement(document.getElementById("root"));
 
-const ImageModal = ({ modalState, modalIsOpen, onModalClose }) => {
+import css from "./ImageModal.module.css";
+interface ModalState {
+  src: string;
+  alt: string;
+}
+interface ImageModalProps {
+  modalState: ModalState;
+  modalIsOpen: boolean;
+  onModalClose: () => void;
+}
+
+const rootElement = Modal.setAppElement(document.getElementById("root") || "");
+
+const ImageModal: FC<ImageModalProps> = ({
+  modalState,
+  modalIsOpen,
+  onModalClose,
+}) => {
   return (
     <div>
       <Modal

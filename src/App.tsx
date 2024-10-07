@@ -8,16 +8,24 @@ import { getPictures } from "./services/api";
 import SearchBar from "./components/SearchBar/SearchBar";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "./components/ImageModal/ImageModal";
+import { UnsplashResponse } from "./App.types";
+import { ImageData } from "./App.types";
+import { AxiosError } from "axios";
+import axios from "axios";
+import { MouseEvent } from "react";
 
 function App() {
-  const [pictures, setPictures] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState(null);
-  const [page, setPage] = useState(1);
-  const [showBtn, setShowBtn] = useState(false);
-  const [modalState, setModalState] = useState({ src: "", alt: "" });
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [pictures, setPictures] = useState<ImageData[]>([]);
+  const [error, setError] = useState<AxiosError | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [showBtn, setShowBtn] = useState<boolean>(false);
+  const [modalState, setModalState] = useState<{ src: string; alt: string }>({
+    src: "",
+    alt: "",
+  });
+  const [modalIsOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (searchValue === null) return;
@@ -26,7 +34,10 @@ function App() {
       setShowBtn(false);
       setIsLoading(true);
       try {
-        const data = await getPictures(searchValue, page);
+        const data: UnsplashResponse = await getPictures(
+          searchValue as string,
+          page
+        );
         console.log(data);
         if (data.results.length === 0) {
           toast("😞 Sorry, nothing was found for your search term.");
@@ -36,8 +47,12 @@ function App() {
           setShowBtn(true);
         }
       } catch (err) {
-        setError(err.message);
-        console.log(error);
+        if (axios.isAxiosError(err)) {
+          setError(err);
+        } else {
+          setError(new AxiosError("Unexpected error occurred"));
+        }
+        console.log(err);
       } finally {
         setIsLoading(false);
       }
@@ -45,18 +60,21 @@ function App() {
     fetchPictures();
   }, [searchValue, page]);
 
-  const onSearch = (searchQuery) => {
+  const onSearch = (searchQuery: string) => {
     console.log("Search query: ", searchQuery);
     setSearchValue(searchQuery);
     setPictures([]);
     setPage(1);
   };
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     setPage(page + 1);
   };
 
-  const handlePictureClick = (modalPictureSrc, modalPictureDesc) => {
+  const handlePictureClick = (
+    modalPictureSrc: string,
+    modalPictureDesc: string
+  ): void => {
     setModalState({ src: modalPictureSrc, alt: modalPictureDesc });
     setIsOpen(true);
   };

@@ -1,5 +1,8 @@
 import css from "./LoadMoreBtn.module.css";
-const LoadMoreBtn = ({ handleClick }) => {
+interface LoadMoreBtnProps {
+  handleClick: () => void;
+}
+const LoadMoreBtn: React.FC<LoadMoreBtnProps> = ({ handleClick }) => {
   return (
     <button className={css.btn} onClick={handleClick}>
       Load more
